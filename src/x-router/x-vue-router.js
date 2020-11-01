@@ -26,12 +26,12 @@ class XVueRouter {
   }
 }
 
-// Vue.use will call install method
+// Vue.use(router) will call install method
 XVueRouter.install = function (Vue) {
   // Save Vue for later use
   _Vue = Vue
 
-  // 1. add $router to the class
+  // 1. add $router to the Vue
   Vue.mixin({
     beforeCreate () {
       // get router instance
