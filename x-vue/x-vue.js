@@ -100,11 +100,10 @@ class Compile {
 
   update (node, exp, dir) {
     // 1. initialize
-
     const fn = this[`${dir}Updater`]
     fn && fn(node, this.$vm[exp])
 
-    // 2. update: create watcher
+    // 2. create watcher, bind vm to watcher
     new Watcher(this.$vm, exp, function (val) {
       fn && fn(node, val)
     })
