@@ -12,8 +12,9 @@ class XVueRouter {
     // CORRECT:
     // `current` needs to be reactive so that `router-view` depends on `current`
     // Thus, once `current` changes, `router-view` will call `render` again
-    const initial = window.location.hash.slice(1) || '/'
-    _Vue.util.defineReactive(this, 'current', initial)
+    this.current = window.location.hash.slice(1) || '/'
+    _Vue.util.defineReactive(this, 'matched', [])
+    this.match()
 
     // spy on url changes
     window.addEventListener('hashchange', this.onHashChange.bind(this))
@@ -22,7 +23,28 @@ class XVueRouter {
 
   onHashChange () {
     this.current = window.location.hash.slice(1)
-    console.log(this.current)
+    this.matched = []
+    this.match()
+  }
+
+  match (routes) {
+    routes = routes || this.$options.routes
+    for (const route of routes) {
+      // assuming that top level won't have children
+      if (route.path === '/' && this.current === '/') {
+        this.matched.push(route)
+        return
+      }
+
+      // i.e. /about/info
+      if (route.path !== '/' && this.current.indexOf(route.path) !== -1) {
+        this.matched.push(route)
+        if (route.children) {
+          this.match(route.children)
+        }
+        return
+      }
+    }
   }
 }
 
@@ -70,10 +92,25 @@ XVueRouter.install = function (Vue) {
 
   Vue.component('router-view', {
     render (h) {
-      let component = null
-      const route = this.$router.$options.routes.find(route => route.path === this.$router.current)
+      // find the depth of current router-view
+      this.$vnode.data.routerView = true
+      let depth = 0
+      let parent = this.$parent
+      // traverse up
+      while (parent) {
+        const vnodeData = parent.$vnode && parent.$vnode.data
+        if (vnodeData && vnodeData.routerView) {
+          // current parent is a router-view
+          depth++
+        }
+        parent = parent.$parent
+      }
+      console.log(depth)
+      console.log(this.$router.matched)
 
-      console.log(this.$router)
+      let component = null
+      const route = this.$router.matched[depth]
+
       if (route) {
         component = route.component
       }
