@@ -1,0 +1,17 @@
+<div id="app">
+  <p>{{counter}}</p>
+  <p>{{counter}}</p>
+</div>
+<script src="x-vue.js"></script>
+<script>
+  const app = new XVue({
+    el: "#app",
+    data: {
+      counter: 1,
+    },
+  });
+  setInterval(() => {
+    // console.log(app.$data)
+    app.counter++;
+  }, 1000);
+</script>

@@ -1,0 +1,49 @@
+<html id="app">
+
+</html>
+<script>
+/**
+ * @param  {Object} obj
+ * @param  {String} key
+ * @param  {Any} val initial value
+ */
+function defineReactive (obj, key, val) {
+  // Closure: it will keep val in memory
+  Object.defineProperty(obj, key, {
+    get: () => {
+      console.log('get', key)
+      return val
+    },
+    set: (newVal) => {
+      if (val !== newVal) {
+        console.log('set', key)
+        val = newVal
+        update()
+      }
+    }
+  })
+}
+
+// set all properties of an object to be reactive
+function observe (obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj
+  }
+  Object.keys(obj).forEach(key => {
+    defineReactive(obj, key, obj[key])
+  })
+}
+
+const obj = {
+  foo: 'foo',
+  boo: 'boo'
+}
+observe(obj)
+
+function update () {
+  app.innerText = obj.foo
+}
+setInterval(() => {
+  obj.foo = new Date().toLocaleTimeString()
+}, 1000)
+</script>
