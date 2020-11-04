@@ -1,6 +1,13 @@
 <div id="app">
+  <!-- attribute -->
+  <p :style="{}" :class="">{{counter}}</p>
+  <p x-text="counter"></p>
+  <p x-html="desc"></p>
+  <!-- event -->
+  <button @click="onclick">button</button>
+  <!-- text -->
   <p>{{counter}}</p>
-  <p>{{counter}}</p>
+
 </div>
 <script src="x-vue.js"></script>
 <script>
@@ -8,8 +15,10 @@
     el: "#app",
     data: {
       counter: 1,
+      desc: `<span style="color: red;">yay</span>`
     },
   });
+
   setInterval(() => {
     // console.log(app.$data)
     app.counter++;
