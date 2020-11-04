@@ -12,6 +12,28 @@ class Store {
     // Save mutations and actions
     this._mutations = options.mutations
     this._actions = options.actions
+    /*
+    {
+      doubleCounter(state){
+        ....
+      }
+    }
+    */
+    this._wrappedGetters = options.getters
+
+    this.getters = {}
+    const computed = {}
+    const store = this
+    Object.keys(this._wrappedGetters).forEach(key => {
+      const fn = store._wrappedGetters[key]
+      // convert it to no args
+      computed[key] = function () {
+        return fn(store.state)
+      }
+      Object.defineProperty(store.getters, key, {
+        get: () => store._vm[key]
+      })
+    })
     // Simple way:
     /*
       this.state = new _Vue({
@@ -25,8 +47,16 @@ class Store {
       // all these will be reactive
       data: {
         $$state: options.state
-      }
+      },
+      computed
     })
+
+    // TODO:
+    // Basic
+    // $store.getters.doubleCounter
+    // this.getters = options.getters
+    // Object.defineProperty(this, 'getters', { get () {} })
+    // Advanced: use Vue.compute
 
     this.commit = this.commit.bind(this)
     this.dispatch = this.dispatch.bind(this)

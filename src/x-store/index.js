@@ -1,4 +1,3 @@
-
 import Vue from 'vue'
 import Vuex from './x-vuex'
 
@@ -18,6 +17,11 @@ export default new Vuex.Store({
       setTimeout(() => {
         commit('add')
       }, 1000)
+    }
+  },
+  getters: {
+    doubleCounter (state) {
+      return state.counter * 2
     }
   },
   modules: {
